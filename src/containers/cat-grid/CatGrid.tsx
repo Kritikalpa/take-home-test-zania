@@ -16,21 +16,21 @@ const CatGrid = () => {
     fetchData();
 
     const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         setOverlay({
           ...overlay,
           open: false,
         });
       }
     };
-    window.addEventListener('keydown', handleEsc);
+    window.addEventListener("keydown", handleEsc);
     return () => {
-      window.removeEventListener('keydown', handleEsc);
+      window.removeEventListener("keydown", handleEsc);
     };
   }, []);
 
   const fetchData = () => {
-    fetch("./data.json")
+    fetch("https://example.com/data")
       .then((res) => {
         return res.json();
       })
@@ -40,6 +40,17 @@ const CatGrid = () => {
       .catch((e: Error) => {
         console.log(e.message);
       });
+  };
+
+  const saveData = (data: Array<Data>) => {
+    fetch("https://example.com/save", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }).then(() => {
+      fetchData();
+    }).catch((e: Error) => {
+      console.log(e.message);
+    });
   };
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
@@ -63,7 +74,8 @@ const CatGrid = () => {
       const updatedItems = [...data];
       const [draggedItem] = updatedItems?.splice(dragIndex, 1);
       updatedItems?.splice(hoverIndex, 0, draggedItem);
-      setData(updatedItems);
+      // setData(updatedItems);
+      saveData(updatedItems);
     }
   };
 
