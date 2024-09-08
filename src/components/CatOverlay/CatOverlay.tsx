@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { Overlay } from "../../types";
 import { catGifs } from "../../assets";
 import "./CatOverlay.scss";

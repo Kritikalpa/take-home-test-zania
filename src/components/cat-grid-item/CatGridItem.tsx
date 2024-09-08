@@ -6,7 +6,7 @@ import "./CatGridItem.scss";
 type CatGridItemProps = {
   item: Data;
   index: number;
-  handleDragStart: (e: React.DragEvent, index: number) => void;
+  handleDragStart: (index: number) => void;
   handleDragOver: (e: React.DragEvent) => void;
   handleDrop: (e: React.DragEvent, hoverIndex: number) => void;
   setOverlay: Dispatch<SetStateAction<Overlay>>;
@@ -26,7 +26,7 @@ const CatGridItem = ({
     <div
       className="cat-grid-item__wrapper"
       draggable
-      onDragStart={(e) => handleDragStart(e, index)}
+      onDragStart={() => handleDragStart(index)}
       onDragOver={(e) => handleDragOver(e)}
       onDrop={(e) => handleDrop(e, index)}
     >
@@ -41,7 +41,7 @@ const CatGridItem = ({
         src={catGifs[item?.position]}
         alt={`cat-${index}`}
         onClick={() =>
-          setOverlay((prev) => ({
+          setOverlay(() => ({
             open: true,
             index: item?.position,
           }))

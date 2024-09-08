@@ -89,7 +89,7 @@ const CatGrid = ({ save, setSave }: CatGridProps) => {
       });
   };
 
-  const handleDragStart = (e: React.DragEvent, index: number) => {
+  const handleDragStart = (index: number) => {
     setDragIndex(index);
   };
 
