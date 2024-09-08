@@ -1,16 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { Data, Overlay } from "../../types";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Data, Overlay, SaveType } from "../../types";
 import CatGridItem from "../../components/cat-grid-item/CatGridItem";
 import "./CatGrid.scss";
-import { catGifs } from "../../assets";
+import CatOverlay from "../../components/CatOverlay/CatOverlay";
 
-const CatGrid = () => {
+type CatGridProps = {
+  save: SaveType;
+  setSave: Dispatch<SetStateAction<SaveType>>;
+};
+
+const CatGrid = ({ save, setSave }: CatGridProps) => {
   const [data, setData] = useState<Array<Data>>();
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overlay, setOverlay] = useState<Overlay>({
     open: false,
     index: 0,
   });
+  const [shouldSave, setShouldSave] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -23,11 +29,24 @@ const CatGrid = () => {
         });
       }
     };
+
+    const saveInterval = setInterval(() => {
+      setShouldSave(true);
+    }, 1000 * 5);
+
     window.addEventListener("keydown", handleEsc);
     return () => {
       window.removeEventListener("keydown", handleEsc);
+      window.clearInterval(saveInterval);
     };
   }, []);
+
+  useEffect(() => {
+    if (shouldSave && JSON.stringify(save?.data) !== JSON.stringify(data)) {
+      saveData(data as Array<Data>);
+    }
+    setShouldSave(false);
+  }, [shouldSave]);
 
   const fetchData = () => {
     fetch("https://example.com/data")
@@ -43,14 +62,31 @@ const CatGrid = () => {
   };
 
   const saveData = (data: Array<Data>) => {
+    setSave((prev) => ({
+      ...prev,
+      active: true,
+    }));
     fetch("https://example.com/save", {
       method: "POST",
       body: JSON.stringify(data),
-    }).then(() => {
-      fetchData();
-    }).catch((e: Error) => {
-      console.log(e.message);
-    });
+    })
+      .then(() => {
+        setTimeout(() => {
+          setSave({
+            active: false,
+            time: Date.now(),
+            data: data,
+          });
+          fetchData();
+        }, 1000);
+      })
+      .catch((e: Error) => {
+        console.log(e.message);
+        setSave((prev) => ({
+          ...prev,
+          active: false,
+        }));
+      });
   };
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
@@ -74,8 +110,15 @@ const CatGrid = () => {
       const updatedItems = [...data];
       const [draggedItem] = updatedItems?.splice(dragIndex, 1);
       updatedItems?.splice(hoverIndex, 0, draggedItem);
-      // setData(updatedItems);
-      saveData(updatedItems);
+      setData(updatedItems);
+
+      // ENABLE THESE TO SAVE ON EVERY ACTION
+
+      // setSave((prev) => ({
+      //   ...prev,
+      //   active: true,
+      // }));
+      // saveData(updatedItems);
     }
   };
 
@@ -95,21 +138,7 @@ const CatGrid = () => {
         ))}
       </div>
       {overlay?.open && (
-        <div
-          className="cat-grid__overlay"
-          onClick={() =>
-            setOverlay({
-              ...overlay,
-              open: false,
-            })
-          }
-        >
-          <img
-            src={catGifs[overlay?.index]}
-            alt="Enlarged"
-            className="cat-grid__overlay-image"
-          />
-        </div>
+        <CatOverlay overlay={overlay} setOverlay={setOverlay} />
       )}
     </>
   );

@@ -7,4 +7,10 @@ export type Data = {
 export type Overlay = {
   open: boolean;
   index: number;
-}
+};
+
+export type SaveType = {
+  active: boolean;
+  time: number;
+  data: Array<Data> | null;
+};
