@@ -15,3 +15,9 @@ This assignment contains a grid of 2 x 3 containing cat images and title. The im
 - The overlay is created by maintaining a state that stores both open condition and current index of the overlay image to be displayed. 
 
 - Loaders are provided for the loading images and are hidden when `onLoad` event is triggered.
+
+### Part 2: Making the call
+
+- Added a local service that mocks a server to send responses. It intercepts the request using service worker and returns a mock HttpResponse object. Handlers are added in the `handler.ts` file under `src/mocks` folder
+
+- It saves and fetch the data to the browser local storage.
