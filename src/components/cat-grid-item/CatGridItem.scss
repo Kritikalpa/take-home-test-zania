@@ -1,0 +1,23 @@
+.cat-grid-item__wrapper {
+  padding: 20px;
+  cursor: grab;
+  position: relative;
+  > div {
+    margin-bottom: 10px;
+  }
+  > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .cat-grid-item__loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
